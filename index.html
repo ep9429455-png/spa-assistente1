@@ -61,7 +61,21 @@ a{color:#d7a1ff}
 #cartaoSenha button{width:100%;margin:8px 0}
 </style>
 </head>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+
 <body>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .catch((erro) => {
+        console.error("Erro ao registrar o service worker:", erro);
+      });
+  });
+}
+</script>
+
 
 <section id="bloqueio">
  <div id="cartaoSenha">
