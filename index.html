@@ -3,46 +3,48 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#160523">
-<title>SPA 11.0 — Segura</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>SPA 12.0 — Assistente Pessoal</title>
 
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;min-height:100vh;padding:24px 14px;
- background:radial-gradient(circle at top,#35105d,#090014 75%);
- color:white;font-family:Arial,sans-serif;
+ margin:0;min-height:100vh;padding:22px 14px;
+ background:radial-gradient(circle at top,#42136b,#090014 76%);
+ color:#fff;font-family:Arial,sans-serif;
  display:flex;justify-content:center
 }
-main{width:100%;max-width:600px;text-align:center}
+main{width:100%;max-width:620px;text-align:center}
 h1{color:#dfaaff;letter-spacing:6px;text-shadow:0 0 20px #a020f0}
-#nucleo,#nucleoApp{
- width:115px;height:115px;margin:25px auto;border-radius:50%;
- background:radial-gradient(circle,white,#d58cff 25%,#8200ff 60%,#260044);
+#nucleo{
+ width:112px;height:112px;margin:25px auto;border-radius:50%;
+ background:radial-gradient(circle,#fff,#d58cff 25%,#8200ff 60%,#260044);
  box-shadow:0 0 30px #a020f0,0 0 70px #6c00ff;
  animation:pulsar 2s infinite alternate
 }
-@keyframes pulsar{from{transform:scale(.93)}to{transform:scale(1.08)}}
+@keyframes pulsar{to{transform:scale(1.08)}}
 input{
- width:100%;padding:15px;margin:8px 0;border-radius:12px;
+ width:100%;padding:15px;margin:7px 0;border-radius:12px;
  border:1px solid #a855f7;background:#18052b;color:white;font-size:16px
 }
 button{
- padding:12px 15px;margin:5px 3px;border:0;border-radius:10px;
+ padding:12px 14px;margin:5px 3px;border:0;border-radius:10px;
  background:#8525cc;color:white;font-size:14px;cursor:pointer
 }
 button:hover{background:#a94bf2}
 button:disabled{opacity:.5}
 #status{color:#d6aaff;min-height:22px}
 #resposta{
- margin-top:20px;padding:16px;border:1px solid #64269a;
- border-radius:14px;background:#140622;text-align:left;overflow-wrap:anywhere;
- white-space:pre-wrap
+ margin-top:18px;padding:16px;border:1px solid #64269a;
+ border-radius:14px;background:#140622;text-align:left;
+ overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.5
 }
+#resposta a{color:#dfb1ff;display:inline-block;margin:8px 8px 8px 0}
 .resultado{padding:12px 0;border-bottom:1px solid #49215e}
-a{color:#d7a1ff}
-.pequeno{color:#bba6cb;font-size:12px}
+.pequeno{color:#bba6cb;font-size:12px;line-height:1.5}
 #bloqueio{
  position:fixed;inset:0;z-index:9999;display:flex;
  align-items:center;justify-content:center;padding:22px;
@@ -57,47 +59,28 @@ a{color:#d7a1ff}
 #cartaoSenha h2{color:#dfaaff}
 #cartaoSenha p{color:#cbb4df;line-height:1.5}
 #erroSenha{color:#ffaaaa;min-height:20px;font-size:14px}
-#appSPA[hidden],#bloqueio[hidden]{display:none!important}
 #cartaoSenha button{width:100%;margin:8px 0}
+[hidden]{display:none!important}
 </style>
 </head>
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
 
 <body>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js")
-      .catch((erro) => {
-        console.error("Erro ao registrar o service worker:", erro);
-      });
-  });
-}
-</script>
-
-
 <section id="bloqueio">
  <div id="cartaoSenha">
   <h1>SPA</h1>
   <h2 id="tituloSenha">🔐 SPA PRIVADA</h2>
   <div id="nucleo"></div>
-  <p id="mensagemSenha">Digite sua senha para acessar a SPA.</p>
-
+  <p id="mensagemSenha">Prepare sua assistente.</p>
   <form id="formSenha">
    <input id="senhaSPA" type="password"
-    placeholder="Senha com letras e números"
-    autocomplete="current-password" required>
+    placeholder="Senha: letras e números" required
+    autocomplete="current-password">
    <input id="confirmarSenha" type="password"
-    placeholder="Confirme sua senha"
-    autocomplete="new-password" required>
+    placeholder="Confirme a senha" required hidden>
    <button id="botaoSenha" type="submit">Entrar</button>
   </form>
   <p id="erroSenha"></p>
-  <p class="pequeno">
-   A memória é criptografada no armazenamento local.
-   Não compartilhe sua senha.
-  </p>
+  <p class="pequeno">A memória é criptografada no armazenamento local. Não compartilhe sua senha.</p>
  </div>
 </section>
 
@@ -105,661 +88,360 @@ if ("serviceWorker" in navigator) {
 <main>
  <h1>SPA</h1>
  <p>Suellen · Programa de Auxílio</p>
- <div id="nucleoApp"></div>
- <p id="status">Pronta para conversar e aprender.</p>
+ <div id="nucleo"></div>
+ <p id="status">Pronta para conversar e aprender. 💜</p>
 
  <form id="formulario">
-  <input id="pergunta"
-   placeholder="Pergunte ou ensine algo à SPA..."
-   autocomplete="off">
+  <input id="pergunta" placeholder="Pergunte ou dê um comando..."
+   autocomplete="off" required>
   <button type="submit">🔎 Enviar</button>
  </form>
 
  <button id="microfone" type="button">🎙️ Falar</button>
  <button id="parar" type="button">🔇 Parar voz</button>
  <button id="verMemoria" type="button">🧠 Minha memória</button>
+ <button id="bloquearAgora" type="button">🔒 Bloquear</button>
 
- <section id="resposta">
-  Olá! 💜 Pode conversar comigo ou me ensinar alguma coisa.
- </section>
+ <section id="resposta">Olá! 💜 Sou a SPA. Pode conversar comigo!</section>
 
- <p class="pequeno">Para ensinar: aprenda: pergunta = resposta</p>
- <p class="pequeno">🔐 Bloqueio automático após 3 minutos sem atividade.</p>
- <button id="bloquearAgora" type="button">🔒 Bloquear SPA</button>
+ <p class="pequeno">Ensinar: aprenda: pergunta = resposta</p>
+ <p class="pequeno">Comandos: abrir YouTube, abrir WhatsApp, abrir Google, pesquisar na internet gatos.</p>
+ <p class="pequeno">Bloqueio automático após 3 minutos sem atividade.</p>
 </main>
 </div>
 
 <script>
 "use strict";
 
-const $ = id => document.getElementById(id);
-const CHAVE_CREDENCIAL = "spa_credencial_v1";
-const CHAVE_MEMORIA_ANTIGA = "spa_memoria_v5";
-const CHAVE_MEMORIA_SEGURA = "spa_memoria_cifrada_v1";
-const TEMPO_BLOQUEIO = 3 * 60 * 1000;
+const $=id=>document.getElementById(id);
+const CHAVE_CREDENCIAL="spa_credencial_v1";
+const CHAVE_MEMORIA_ANTIGA="spa_memoria_v5";
+const CHAVE_MEMORIA_SEGURA="spa_memoria_cifrada_v1";
+const TEMPO_BLOQUEIO=180000;
 
-let memoria = {};
-let chavePrivada = null;
-let reconhecimento = null;
-let contexto = [];
-let ultimaPergunta = "";
-let sessaoId = 0;
-let temporizadorBloqueio = null;
-let ocupado = false;
+let memoria={},chavePrivada=null,reconhecimento=null;
+let contexto=[],sessaoId=0,temporizadorBloqueio=null,ocupado=false;
 
-function codificar(texto){
- return new TextEncoder().encode(texto);
-}
-function decodificar(bytes){
- return new TextDecoder().decode(bytes);
-}
-function emBase64(bytes){
- return btoa(String.fromCharCode(...new Uint8Array(bytes)));
-}
-function deBase64(texto){
- return Uint8Array.from(atob(texto),c=>c.charCodeAt(0));
-}
-
+function codificar(s){return new TextEncoder().encode(s)}
+function decodificar(b){return new TextDecoder().decode(b)}
+function emBase64(b){return btoa(String.fromCharCode(...new Uint8Array(b)))}
+function deBase64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
 function compararBytes(a,b){
  if(a.length!==b.length)return false;
- let diferenca=0;
- for(let i=0;i<a.length;i++)diferenca|=a[i]^b[i];
- return diferenca===0;
+ let d=0;for(let i=0;i<a.length;i++)d|=a[i]^b[i];
+ return d===0;
 }
-
-/* Deriva material criptográfico da senha. */
-async function derivarMaterial(senha,sal){
- const material=await crypto.subtle.importKey(
-  "raw",codificar(senha),"PBKDF2",false,["deriveBits"]
- );
- return new Uint8Array(await crypto.subtle.deriveBits({
-  name:"PBKDF2",
-  salt:sal,
-  iterations:310000,
-  hash:"SHA-256"
- },material,512));
-}
-
-async function importarChave(bytes){
- return crypto.subtle.importKey(
-  "raw",bytes,{name:"AES-GCM"},false,["encrypt","decrypt"]
- );
-}
-
-/* Criptografa a memória antes de gravá-la. */
-async function criptografarMemoria(dados,chave){
- const iv=crypto.getRandomValues(new Uint8Array(12));
- const texto=codificar(JSON.stringify(dados));
- const cifra=await crypto.subtle.encrypt(
-  {name:"AES-GCM",iv},chave,texto
- );
- return {
-  versao:1,
-  iv:emBase64(iv),
-  dados:emBase64(cifra)
- };
-}
-
-async function descriptografarMemoria(registro,chave){
- if(!registro || registro.versao!==1 ||
-    !registro.iv || !registro.dados){
-  throw new Error("Formato da memória inválido.");
- }
- const texto=await crypto.subtle.decrypt(
-  {name:"AES-GCM",iv:deBase64(registro.iv)},
-  chave,
-  deBase64(registro.dados)
- );
- const dados=JSON.parse(decodificar(texto));
- if(!dados || typeof dados!=="object" || Array.isArray(dados)){
-  throw new Error("Conteúdo da memória inválido.");
- }
- return dados;
-}
-
-async function salvarMemoria(){
- if(!chavePrivada)throw new Error("SPA bloqueada.");
- const registro=await criptografarMemoria(memoria,chavePrivada);
- localStorage.setItem(CHAVE_MEMORIA_SEGURA,JSON.stringify(registro));
-}
-
-/* Migra a memória antiga para o formato criptografado. */
-async function carregarMemoriaSegura(){
- const salva=localStorage.getItem(CHAVE_MEMORIA_SEGURA);
-
- if(salva){
-  memoria=await descriptografarMemoria(
-   JSON.parse(salva),chavePrivada
-  );
-  return;
- }
-
- let antiga={};
- try{
-  const textoAntigo=localStorage.getItem(CHAVE_MEMORIA_ANTIGA);
-  if(textoAntigo){
-   const dados=JSON.parse(textoAntigo);
-   if(dados && typeof dados==="object" && !Array.isArray(dados)){
-    antiga=dados;
-   }
-  }
- }catch(e){
-  throw new Error("A memória antiga não pôde ser lida.");
- }
-
- memoria=antiga;
- await salvarMemoria();
-
- /* Só remove a memória antiga depois de salvar a nova. */
- localStorage.removeItem(CHAVE_MEMORIA_ANTIGA);
-}
-
-function pararVoz(){
- if("speechSynthesis" in window)speechSynthesis.cancel();
- if(reconhecimento){
-  try{reconhecimento.abort()}catch(e){}
- }
- reconhecimento=null;
- window.reconhecimentoSPA=null;
-}
-
-function cancelarBloqueioAutomatico(){
- if(temporizadorBloqueio){
-  clearTimeout(temporizadorBloqueio);
-  temporizadorBloqueio=null;
- }
-}
-
-function renovarBloqueioAutomatico(){
- cancelarBloqueioAutomatico();
- if(!$("appSPA").hidden && chavePrivada){
-  temporizadorBloqueio=setTimeout(()=>{
-   bloquearSPA("A SPA foi bloqueada após 3 minutos sem atividade.");
-  },TEMPO_BLOQUEIO);
- }
-}
-
-function atividadeUsuario(){
- if(!$("appSPA").hidden && chavePrivada){
-  renovarBloqueioAutomatico();
- }
-}
-
-function bloquearSPA(motivo){
- sessaoId++;
- cancelarBloqueioAutomatico();
- pararVoz();
-
- chavePrivada=null;
- memoria={};
- contexto=[];
- ultimaPergunta="";
- ocupado=false;
-
- $("appSPA").hidden=true;
- $("bloqueio").hidden=false;
- $("senhaSPA").value="";
- $("confirmarSenha").value="";
- $("confirmarSenha").hidden=true;
- $("confirmarSenha").required=false;
- $("mensagemSenha").textContent=
-  motivo || "Digite sua senha para acessar a SPA.";
- $("tituloSenha").textContent="🔐 SPA PRIVADA";
- $("botaoSenha").textContent="Desbloquear";
- $("senhaSPA").autocomplete="current-password";
- $("erroSenha").textContent="";
- $("status").textContent="SPA bloqueada.";
-}
-
-async function abrirSPA(senha,credencial){
- const sal=deBase64(credencial.sal);
- const material=await derivarMaterial(senha,sal);
- const hashNovo=material.slice(0,32);
- const bytesChave=material.slice(32,64);
-
- /* Compatibilidade com a credencial antiga da SPA 10.0. */
- if(credencial.versao===1){
-  const materialAntigo=await derivarMaterialAntigo(senha,sal);
-  if(!compararBytes(materialAntigo,deBase64(credencial.hash))){
-   throw new Error("Senha incorreta.");
-  }
-  credencial={
-   versao:2,
-   sal:credencial.sal,
-   hash:emBase64(hashNovo)
-  };
-  localStorage.setItem(CHAVE_CREDENCIAL,JSON.stringify(credencial));
- }else{
-  if(!compararBytes(hashNovo,deBase64(credencial.hash))){
-   throw new Error("Senha incorreta.");
-  }
- }
-
- const novaChave=await importarChave(bytesChave);
- chavePrivada=novaChave;
-
- try{
-  await carregarMemoriaSegura();
- }catch(e){
-  chavePrivada=null;
-  memoria={};
-  throw new Error(
-   "Não consegui abrir a memória protegida. Ela não foi apagada."
-  );
- }
-
- sessaoId++;
- $("bloqueio").hidden=true;
- $("appSPA").hidden=false;
- $("senhaSPA").value="";
- $("confirmarSenha").value="";
- $("erroSenha").textContent="";
- $("status").textContent="SPA desbloqueada 💜";
- renovarBloqueioAutomatico();
-}
-
-async function derivarMaterialAntigo(senha,sal){
- const material=await crypto.subtle.importKey(
-  "raw",codificar(senha),"PBKDF2",false,["deriveBits"]
- );
+async function derivar(senha,sal,bits=512){
+ const m=await crypto.subtle.importKey("raw",codificar(senha),"PBKDF2",false,["deriveBits"]);
  return new Uint8Array(await crypto.subtle.deriveBits({
   name:"PBKDF2",salt:sal,iterations:310000,hash:"SHA-256"
- },material,256));
+ },m,bits));
 }
-
-(async function iniciarProtecao(){
- const form=$("formSenha");
- const campo=$("senhaSPA");
- const confirmacao=$("confirmarSenha");
- const botao=$("botaoSenha");
- const erro=$("erroSenha");
-
- if(!window.crypto || !crypto.subtle){
-  erro.textContent="Abra a SPA em um endereço HTTPS seguro.";
-  botao.disabled=true;
-  return;
- }
-
- let credencial;
+async function importarChave(b){
+ return crypto.subtle.importKey("raw",b,{name:"AES-GCM"},false,["encrypt","decrypt"]);
+}
+async function cifrar(dados,chave){
+ const iv=crypto.getRandomValues(new Uint8Array(12));
+ const c=await crypto.subtle.encrypt({name:"AES-GCM",iv},chave,codificar(JSON.stringify(dados)));
+ return {versao:1,iv:emBase64(iv),dados:emBase64(c)};
+}
+async function decifrar(reg,chave){
+ if(!reg||reg.versao!==1||!reg.iv||!reg.dados)throw Error("Formato de memória inválido.");
+ const b=await crypto.subtle.decrypt({name:"AES-GCM",iv:deBase64(reg.iv)},chave,deBase64(reg.dados));
+ const obj=JSON.parse(decodificar(b));
+ if(!obj||typeof obj!=="object"||Array.isArray(obj))throw Error("Memória inválida.");
+ return obj;
+}
+async function salvarMemoria(){
+ if(!chavePrivada)throw Error("SPA bloqueada.");
+ localStorage.setItem(CHAVE_MEMORIA_SEGURA,JSON.stringify(await cifrar(memoria,chavePrivada)));
+}
+async function carregarMemoria(){
+ const salva=localStorage.getItem(CHAVE_MEMORIA_SEGURA);
+ if(salva){memoria=await decifrar(JSON.parse(salva),chavePrivada);return}
+ let antiga={};
  try{
-  credencial=JSON.parse(localStorage.getItem(CHAVE_CREDENCIAL)||"null");
- }catch(e){
-  erro.textContent="Não foi possível ler a configuração.";
-  botao.disabled=true;
-  return;
- }
+  const t=localStorage.getItem(CHAVE_MEMORIA_ANTIGA);
+  if(t){const d=JSON.parse(t);if(d&&typeof d==="object"&&!Array.isArray(d))antiga=d}
+ }catch(e){throw Error("A memória antiga não pôde ser lida.")}
+ memoria=antiga;
+ await salvarMemoria();
+ localStorage.removeItem(CHAVE_MEMORIA_ANTIGA);
+}
+function pararVoz(){
+ if("speechSynthesis"in window)speechSynthesis.cancel();
+ if(reconhecimento){try{reconhecimento.abort()}catch(e){}}
+ reconhecimento=null;
+}
+function cancelarBloqueio(){
+ if(temporizadorBloqueio)clearTimeout(temporizadorBloqueio);
+ temporizadorBloqueio=null;
+}
+function renovarBloqueio(){
+ cancelarBloqueio();
+ if(chavePrivada&&!$("appSPA").hidden)
+  temporizadorBloqueio=setTimeout(()=>bloquearSPA("Bloqueada após 3 minutos sem atividade."),TEMPO_BLOQUEIO);
+}
+function bloquearSPA(motivo){
+ sessaoId++;cancelarBloqueio();pararVoz();
+ chavePrivada=null;memoria={};contexto=[];ocupado=false;
+ $("appSPA").hidden=true;$("bloqueio").hidden=false;
+ $("senhaSPA").value="";$("confirmarSenha").value="";
+ $("mensagemSenha").textContent=motivo||"Digite sua senha.";
+ $("erroSenha").textContent="";
+}
+document.addEventListener("pointerdown",()=>{
+ if(chavePrivada&&!$("appSPA").hidden)renovarBloqueio();
+});
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden&&chavePrivada)bloquearSPA("SPA bloqueada ao sair da página. Digite sua senha novamente.");
+});
 
- if(credencial){
-  $("mensagemSenha").textContent="Digite sua senha para acessar a SPA.";
-  confirmacao.hidden=true;
-  confirmacao.required=false;
-  botao.textContent="Desbloquear";
-  campo.autocomplete="current-password";
+async function abrirSPA(senha,cred){
+ const sal=deBase64(cred.sal);
+ let material;
+ if(cred.versao===1){
+  material=await derivar(senha,sal,256);
+  if(!compararBytes(material,deBase64(cred.hash)))throw Error("Senha incorreta.");
+  const novo=await derivar(senha,sal,512);
+  cred={versao:2,sal:cred.sal,hash:emBase64(novo.slice(0,32))};
+  localStorage.setItem(CHAVE_CREDENCIAL,JSON.stringify(cred));
+  material=novo;
  }else{
-  $("mensagemSenha").textContent="Crie uma senha exclusiva para sua assistente.";
-  confirmacao.hidden=false;
-  confirmacao.required=true;
-  botao.textContent="Criar senha";
-  campo.autocomplete="new-password";
+  material=await derivar(senha,sal,512);
+  if(!compararBytes(material.slice(0,32),deBase64(cred.hash)))throw Error("Senha incorreta.");
  }
-
- form.addEventListener("submit",async evento=>{
-  evento.preventDefault();
-  if(ocupado)return;
-
-  erro.textContent="";
-  const senha=campo.value;
-
-  if(senha.length<10 ||
-     !/[A-Za-zÀ-ÿ]/.test(senha) ||
-     !/[0-9]/.test(senha)){
-   erro.textContent="Use pelo menos 10 caracteres, com letras e números.";
-   return;
+ chavePrivada=await importarChave(material.slice(32,64));
+ try{await carregarMemoria()}
+ catch(e){chavePrivada=null;memoria={};throw Error("Não consegui abrir a memória protegida. Ela não foi apagada.")}
+ sessaoId++;
+ $("bloqueio").hidden=true;$("appSPA").hidden=false;
+ $("status").textContent="SPA desbloqueada 💜";
+ renovarBloqueio();
+}
+(async()=>{
+ if(!crypto?.subtle){$("erroSenha").textContent="Abra a SPA em HTTPS.";return}
+ let cred=null;
+ try{cred=JSON.parse(localStorage.getItem(CHAVE_CREDENCIAL)||"null")}catch(e){}
+ if(cred){
+  $("confirmarSenha").hidden=true;$("confirmarSenha").required=false;
+  $("mensagemSenha").textContent="Digite sua senha para desbloquear.";
+ }else{
+  $("confirmarSenha").hidden=false;$("confirmarSenha").required=true;
+  $("mensagemSenha").textContent="Crie uma senha com pelo menos 10 caracteres, incluindo letras e números.";
+ }
+ $("formSenha").addEventListener("submit",async ev=>{
+  ev.preventDefault();if(ocupado)return;
+  const senha=$("senhaSPA").value;
+  if(senha.length<10||!/[A-Za-zÀ-ÿ]/.test(senha)||!/[0-9]/.test(senha)){
+   $("erroSenha").textContent="Use 10 caracteres ou mais, com letras e números.";return;
   }
-
-  ocupado=true;
-  botao.disabled=true;
-
+  ocupado=true;$("botaoSenha").disabled=true;$("erroSenha").textContent="";
   try{
-   if(!credencial){
-    if(senha!==confirmacao.value){
-     erro.textContent="As senhas não coincidem.";
-     return;
-    }
-
+   if(!cred){
+    if(senha!==$("confirmarSenha").value)throw Error("As senhas não coincidem.");
     const sal=crypto.getRandomValues(new Uint8Array(16));
-    const material=await derivarMaterial(senha,sal);
-    const hash=material.slice(0,32);
-
-    credencial={
-     versao:2,
-     sal:emBase64(sal),
-     hash:emBase64(hash)
-    };
-
-    /* Primeiro grava a credencial; depois cria a memória cifrada. */
-    localStorage.setItem(CHAVE_CREDENCIAL,JSON.stringify(credencial));
-    await abrirSPA(senha,credencial);
-   }else{
-    await abrirSPA(senha,credencial);
+    const m=await derivar(senha,sal,512);
+    cred={versao:2,sal:emBase64(sal),hash:emBase64(m.slice(0,32))};
+    localStorage.setItem(CHAVE_CREDENCIAL,JSON.stringify(cred));
    }
-  }catch(e){
-   erro.textContent=e.message==="Senha incorreta."
-    ?"Senha incorreta. Tente novamente."
-    :(e.message || "Falha na proteção. Tente novamente.");
-   campo.value="";
-  }finally{
-   ocupado=false;
-   botao.disabled=false;
-  }
+   await abrirSPA(senha,cred);
+   $("senhaSPA").value="";$("confirmarSenha").value="";
+  }catch(e){$("erroSenha").textContent=e.message||"Erro ao abrir a SPA."}
+  finally{ocupado=false;$("botaoSenha").disabled=false}
  });
 })();
 
-$("bloquearAgora").addEventListener("click",()=>bloquearSPA());
-
-document.addEventListener("pointerdown",atividadeUsuario);
-document.addEventListener("keydown",atividadeUsuario);
-document.addEventListener("touchstart",atividadeUsuario,{passive:true});
-
-/* Bloqueia ao sair da página; a memória permanece cifrada no armazenamento. */
-document.addEventListener("visibilitychange",()=>{
- if(document.hidden && !$("appSPA").hidden && chavePrivada){
-  bloquearSPA("A SPA foi bloqueada ao sair da página. Digite sua senha.");
- }
-});
-
-/* FUNÇÕES DA SPA */
-function normalizar(texto){
- return texto.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+function normalizar(s){
+ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
  .toLowerCase().replace(/[!?.,;:]/g,"").trim().replace(/\s+/g," ");
 }
-
-function falar(texto){
- if(!chavePrivada || $("appSPA").hidden)return;
- if(!("speechSynthesis" in window)){
-  $("status").textContent="A voz não está disponível neste navegador.";
-  return;
- }
- speechSynthesis.cancel();
- const voz=new SpeechSynthesisUtterance(texto);
- voz.lang="pt-BR";voz.rate=1;voz.pitch=1;
- voz.onstart=()=>{
-  if(chavePrivada)$("status").textContent="SPA está falando...";
- };
- voz.onend=()=>{
-  if(chavePrivada)$("status").textContent="Pronta para você.";
- };
- voz.onerror=()=>{
-  if(chavePrivada)$("status").textContent="Não consegui reproduzir a voz.";
- };
- speechSynthesis.speak(voz);
-}
-
-function mostrarMensagem(texto){
- if(!chavePrivada || $("appSPA").hidden)return;
- $("resposta").replaceChildren();
- const p=document.createElement("p");
- p.textContent=texto;
- $("resposta").appendChild(p);
-}
-
-function registrarConversa(pergunta,resposta){
+function mostrarMensagem(s){
  if(!chavePrivada)return;
- contexto.push({pergunta,resposta});
+ $("resposta").replaceChildren();
+ const p=document.createElement("p");p.textContent=s;$("resposta").appendChild(p);
+}
+function adicionarLink(texto,url){
+ const a=document.createElement("a");
+ a.href=url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=texto;
+ $("resposta").appendChild(a);
+}
+function abrirDestino(nome,url){
+ mostrarMensagem("Tentando abrir "+nome+" 💜");
+ $("status").textContent="Abrindo destino...";
+ // Alguns navegadores bloqueiam pop-ups originados de comandos de voz.
+ const janela=window.open(url,"_blank");
+ if(!janela){
+  mostrarMensagem("O navegador bloqueou a nova aba. Toque no link para continuar.");
+  adicionarLink("Abrir "+nome,url);
+  $("status").textContent="Toque no link para abrir.";
+ }else{
+  adicionarLink("Abrir novamente "+nome,url);
+  $("status").textContent="Comando enviado ao navegador.";
+ }
+}
+const SITES={
+ "youtube":"https://www.youtube.com/",
+ "google":"https://www.google.com/",
+ "whatsapp":"https://wa.me/",
+ "instagram":"https://www.instagram.com/",
+ "tiktok":"https://www.tiktok.com/",
+ "facebook":"https://www.facebook.com/",
+ "gmail":"https://mail.google.com/",
+ "google maps":"https://maps.google.com/",
+ "mapas":"https://maps.google.com/",
+ "spotify":"https://open.spotify.com/",
+ "wikipedia":"https://pt.wikipedia.org/",
+ "github":"https://github.com/",
+ "codepen":"https://codepen.io/",
+ "roblox":"https://www.roblox.com/",
+ "discord":"https://discord.com/app/"
+};
+function executarComando(termo){
+ const f=normalizar(termo);
+ const m=f.match(/^(?:spa )?(?:abra|abrir|abre|acessar|acesse|entrar em|ir para|va para)\s+(?:o site |o aplicativo |o app |o |a )?(.+)$/);
+ if(m){
+  const nome=m[1].trim();
+  if(SITES[nome]){abrirDestino(nome,SITES[nome]);return true}
+  const endereco=nome.replace(/\s+/g,"");
+  if(/^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/.*)?$/i.test(endereco)){
+   const url=/^https?:\/\//i.test(endereco)?endereco:"https://"+endereco;
+   abrirDestino(endereco,url);return true;
+  }
+  mostrarMensagem("Ainda não conheço esse destino: "+nome+". Tente um site conhecido ou informe um endereço como exemplo.com.");
+  return true;
+ }
+ const p=f.match(/^(?:pesquisar na internet|pesquise na internet|pesquisar no google|pesquise no google|buscar na internet)\s+(.+)$/);
+ if(p){
+  const url="https://www.google.com/search?q="+encodeURIComponent(p[1]);
+  abrirDestino("pesquisa no Google",url);return true;
+ }
+ return false;
+}
+function falar(texto){
+ if(!chavePrivada)return;
+ if(!("speechSynthesis"in window)){ $("status").textContent="Voz indisponível neste navegador.";return}
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(texto);u.lang="pt-BR";
+ u.onstart=()=>{if(chavePrivada)$("status").textContent="SPA falando..."};
+ u.onend=()=>{if(chavePrivada)$("status").textContent="Pronta para você."};
+ speechSynthesis.speak(u);
+}
+function registrar(p,r){
+ contexto.push({pergunta:p,resposta:r});
  if(contexto.length>10)contexto.shift();
 }
-
-async function ensinar(pergunta,resposta){
- if(!chavePrivada || $("appSPA").hidden)return;
- const chave=normalizar(pergunta);
- if(!chave || !resposta.trim()){
-  falar("Preciso de uma pergunta e de uma resposta para aprender.");
-  return;
- }
-
- const anterior=memoria[chave];
- memoria[chave]=resposta.trim();
-
+async function ensinar(p,r){
+ const k=normalizar(p);
+ if(!k||!r.trim()){falar("Preciso de uma pergunta e uma resposta.");return}
+ const anterior=memoria[k];memoria[k]=r.trim();
  try{
   await salvarMemoria();
-  if(!chavePrivada)return;
-  mostrarMensagem("Aprendi uma coisa nova! 💜\n\nPergunta: "+
-   pergunta+"\nResposta: "+resposta);
-  registrarConversa(pergunta,resposta);
-  falar("Aprendi! Guardei essa associação de forma protegida.");
+  mostrarMensagem("Aprendi! 💜\n\nPergunta: "+p+"\nResposta: "+r);
+  registrar(p,r);falar("Aprendi e guardei essa associação protegida.");
  }catch(e){
-  if(anterior===undefined)delete memoria[chave];
-  else memoria[chave]=anterior;
-  mostrarMensagem("Não consegui salvar a memória protegida.");
+  if(anterior===undefined)delete memoria[k];else memoria[k]=anterior;
+  mostrarMensagem("Não consegui salvar a memória.");
  }
 }
-
-function procurarAprendizado(pergunta){
- const chave=normalizar(pergunta);
- if(memoria[chave])return memoria[chave];
-
- const palavrasPergunta=chave.split(" ").filter(p=>p.length>2);
- let melhorResposta=null,melhorPontuacao=0;
-
- for(const [perguntaSalva,respostaSalva] of Object.entries(memoria)){
-  const palavrasSalvas=perguntaSalva.split(" ").filter(p=>p.length>2);
-  if(!palavrasSalvas.length || !palavrasPergunta.length)continue;
-  const comuns=palavrasPergunta.filter(p=>palavrasSalvas.includes(p)).length;
-  const pontuacao=comuns/Math.max(palavrasPergunta.length,palavrasSalvas.length);
-  if(pontuacao>melhorPontuacao){
-   melhorPontuacao=pontuacao;
-   melhorResposta=respostaSalva;
-  }
+function buscarAprendizado(p){
+ const k=normalizar(p);
+ if(memoria[k])return memoria[k];
+ const palavras=k.split(" ").filter(x=>x.length>2);
+ let melhor=null,pont=0;
+ for(const [pk,r] of Object.entries(memoria)){
+  const ps=pk.split(" ").filter(x=>x.length>2);
+  if(!ps.length||!palavras.length)continue;
+  const comuns=palavras.filter(x=>ps.includes(x)).length;
+  const s=comuns/Math.max(palavras.length,ps.length);
+  if(s>pont){pont=s;melhor=r}
  }
- return melhorPontuacao>=0.5?melhorResposta:null;
+ return pont>=.5?melhor:null;
 }
-
-function mostrarMemoria(){
- if(!chavePrivada || $("appSPA").hidden)return;
- $("resposta").replaceChildren();
-
- const titulo=document.createElement("h3");
- titulo.textContent="🧠 Minha memória";
- $("resposta").appendChild(titulo);
-
- const chaves=Object.keys(memoria);
- if(!chaves.length){
-  mostrarMensagem("Ainda não aprendi nenhuma associação.");
-  falar("Minha memória de associações está vazia.");
-  return;
- }
-
- chaves.forEach(chave=>{
-  const p=document.createElement("p");
-  p.textContent="Pergunta: "+chave+"\nResposta: "+memoria[chave];
-  $("resposta").appendChild(p);
- });
- falar("Tenho "+chaves.length+" associações guardadas na memória.");
-}
-
-const respostasBasicas=[
- {palavras:["como voce esta","como voce ta","tudo bem com voce"],resposta:"Estou pronta para conversar com você! 💜 Obrigada por perguntar. E você, como está?"},
- {palavras:["bom dia"],resposta:"Bom dia! 💜 Espero que seu dia seja maravilhoso. O que vamos fazer hoje?"},
- {palavras:["boa tarde"],resposta:"Boa tarde! Que bom conversar com você. Como posso ajudar?"},
- {palavras:["boa noite"],resposta:"Boa noite! Espero que você tenha uma noite tranquila. Quer conversar ou pesquisar alguma coisa?"},
- {palavras:["oi","ola","e ai"],resposta:"Oii! 💜 Estou aqui! O que vamos fazer hoje?"},
- {palavras:["obrigado","obrigada","valeu"],resposta:"Por nada! Fico feliz em poder ajudar você."},
- {palavras:["quem e voce","qual seu nome"],resposta:"Eu sou a SPA, Suellen, Programa de Auxílio! Posso conversar, pesquisar e aprender associações que você me ensinar."},
- {palavras:["voce e minha amiga","somos amigos"],resposta:"Sou sua companhia virtual amigável! Posso conversar com você e ajudar nas suas ideias sempre que abrir a SPA."},
- {palavras:["estou triste","to triste","nao estou bem"],resposta:"Sinto muito que você esteja assim. 💜 Quer me contar o que aconteceu? Vou te ouvir."},
- {palavras:["estou feliz","to feliz","estou muito feliz"],resposta:"Que bom! 💜 Quer me contar o que deixou você feliz?"},
- {palavras:["obrigado por tudo","voce me ajudou"],resposta:"Fico feliz que a conversa tenha ajudado! 💜 O que mais podemos fazer?"},
- {palavras:["o que voce pode fazer","como voce funciona"],resposta:"Posso responder perguntas básicas, pesquisar na Wikipédia, falar em voz alta e guardar associações criptografadas que você me ensinar."}
+const BASICAS=[
+ [["como voce esta","como voce ta","tudo bem com voce"],"Estou pronta para conversar com você! 💜 E você, como está?"],
+ [["bom dia"],"Bom dia! 💜 O que vamos fazer hoje?"],
+ [["boa tarde"],"Boa tarde! Como posso ajudar?"],
+ [["boa noite"],"Boa noite! Quer conversar ou pesquisar algo?"],
+ [["oi","ola","e ai"],"Oii! 💜 Estou aqui!"],
+ [["obrigado","obrigada","valeu"],"Por nada! Fico feliz em ajudar."],
+ [["quem e voce","qual seu nome"],"Sou a SPA, Suellen, Programa de Auxílio!"],
+ [["estou triste","to triste","nao estou bem"],"Sinto muito. 💜 Quer me contar o que aconteceu?"],
+ [["estou feliz","to feliz"],"Que bom! 💜 O que deixou você feliz?"],
+ [["o que voce pode fazer","como voce funciona"],"Posso conversar, pesquisar na Wikipédia, abrir sites, falar e aprender associações."]
 ];
-
-function procurarRespostaBasica(frase){
- const lista=[...respostasBasicas].sort((a,b)=>
-  Math.max(...b.palavras.map(p=>p.length))-
-  Math.max(...a.palavras.map(p=>p.length))
- );
- return lista.find(item=>item.palavras.some(p=>
-  frase===p || frase.startsWith(p+" ") || frase.endsWith(" "+p)
- ));
-}
-
 async function pesquisar(termo){
- if(!chavePrivada || $("appSPA").hidden)return;
- termo=termo.trim();
- if(!termo)return;
-
- const minhaSessao=sessaoId;
- const comando=termo.match(/^aprenda:\s*(.+?)\s*=\s*(.+)$/i);
- if(comando){
-  await ensinar(comando[1],comando[2]);
+ if(!chavePrivada||!termo.trim())return;
+ const sessao=sessaoId;
+ const aula=termo.match(/^aprenda:\s*(.+?)\s*=\s*(.+)$/i);
+ if(aula){await ensinar(aula[1],aula[2]);return}
+ if(executarComando(termo))return;
+ const f=normalizar(termo);
+ if(f==="minha memoria"||f==="ver memoria"){
+  const chaves=Object.keys(memoria);
+  mostrarMensagem(chaves.length?chaves.map(k=>"Pergunta: "+k+"\nResposta: "+memoria[k]).join("\n\n"):"Ainda não aprendi associações.");
   return;
  }
-
- const frase=normalizar(termo);
- ultimaPergunta=termo;
-
- if(frase==="minha memoria" || frase==="ver memoria"){
-  mostrarMemoria();return;
- }
-
- if(["me explica melhor","explique melhor","fala mais","continue","continua"].includes(frase)
-    && contexto.length>0){
-  const anterior=contexto[contexto.length-1];
-  if(anterior.resposta){
-   const texto="Sobre o que conversamos: "+anterior.resposta;
-   mostrarMensagem(texto);falar(texto);return;
-  }
- }
-
- const aprendida=procurarAprendizado(termo);
- if(aprendida){
-  mostrarMensagem(aprendida);
-  registrarConversa(termo,aprendida);
-  falar(aprendida);
-  return;
- }
-
- const basica=procurarRespostaBasica(frase);
- if(basica){
-  mostrarMensagem(basica.resposta);
-  registrarConversa(termo,basica.resposta);
-  falar(basica.resposta);
-  return;
- }
+ const aprendida=buscarAprendizado(termo);
+ if(aprendida){mostrarMensagem(aprendida);registrar(termo,aprendida);falar(aprendida);return}
+ const basica=BASICAS.find(([palavras])=>palavras.some(p=>f===p||f.startsWith(p+" ")||f.endsWith(" "+p)));
+ if(basica){mostrarMensagem(basica[1]);registrar(termo,basica[1]);falar(basica[1]);return}
 
  $("status").textContent="Pesquisando na Wikipédia...";
  mostrarMensagem("Estou procurando informações...");
- if("speechSynthesis" in window)speechSynthesis.cancel();
-
  try{
   const url="https://pt.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=3&srsearch="+encodeURIComponent(termo);
-  const resposta=await fetch(url);
-  if(minhaSessao!==sessaoId || !chavePrivada)return;
-  if(!resposta.ok)throw new Error("Falha na pesquisa");
-
-  const dados=await resposta.json();
-  const resultados=dados.query.search;
-  if(!resultados.length){
-   const texto="Não encontrei resultados. Tente outras palavras.";
-   mostrarMensagem(texto);falar(texto);return;
-  }
-
+  const resp=await fetch(url);
+  if(sessao!==sessaoId||!chavePrivada)return;
+  if(!resp.ok)throw Error();
+  const dados=await resp.json(),itens=dados.query.search;
+  if(!itens.length){mostrarMensagem("Não encontrei resultados. Tente outras palavras.");return}
   $("resposta").replaceChildren();
-  const titulo=document.createElement("h3");
-  titulo.textContent="Resultados da pesquisa";
-  $("resposta").appendChild(titulo);
-
-  for(const item of resultados){
-   const bloco=document.createElement("div");
-   bloco.className="resultado";
-   const nome=document.createElement("h3");
-   nome.textContent=item.title;
-   const descricao=document.createElement("p");
-   descricao.textContent=item.snippet.replace(/<[^>]*>/g,"");
-   const link=document.createElement("a");
-   link.href="https://pt.wikipedia.org/wiki/"+encodeURIComponent(item.title.replace(/ /g,"_"));
-   link.target="_blank";
-   link.rel="noopener noreferrer";
-   link.textContent="Ler artigo completo";
-   bloco.append(nome,descricao,link);
-   $("resposta").appendChild(bloco);
+  const h=document.createElement("h3");h.textContent="Resultados da pesquisa";$("resposta").appendChild(h);
+  for(const item of itens){
+   const b=document.createElement("div");b.className="resultado";
+   const t=document.createElement("h3");t.textContent=item.title;
+   const d=document.createElement("p");d.textContent=item.snippet.replace(/<[^>]*>/g,"");
+   b.append(t,d);$("resposta").appendChild(b);
+   adicionarLink("Ler artigo completo", "https://pt.wikipedia.org/wiki/"+encodeURIComponent(item.title.replace(/ /g,"_")));
   }
-
-  const primeiro=resultados[0].title;
-  let textoFalado=primeiro+". "+resultados[0].snippet.replace(/<[^>]*>/g,"");
-
-  try{
-   const resumoURL="https://pt.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(primeiro.replace(/ /g,"_"));
-   const r=await fetch(resumoURL);
-   if(minhaSessao!==sessaoId || !chavePrivada)return;
-   if(r.ok){
-    const artigo=await r.json();
-    if(artigo.extract)textoFalado=artigo.title+". "+artigo.extract;
-   }
-  }catch(e){}
-
-  if(minhaSessao!==sessaoId || !chavePrivada)return;
-  registrarConversa(termo,textoFalado);
-  $("status").textContent="Pesquisa concluída.";
-  falar(textoFalado);
+  const resumo=itens[0].title+". "+itens[0].snippet.replace(/<[^>]*>/g,"");
+  registrar(termo,resumo);falar(resumo);$("status").textContent="Pesquisa concluída.";
  }catch(e){
-  if(minhaSessao!==sessaoId || !chavePrivada)return;
-  const texto="Não consegui pesquisar agora. Confira sua conexão e tente novamente.";
-  mostrarMensagem(texto);falar(texto);
+  if(sessao!==sessaoId||!chavePrivada)return;
+  mostrarMensagem("Não consegui pesquisar. Confira sua conexão e tente novamente.");
  }
 }
-
-$("formulario").addEventListener("submit",evento=>{
- evento.preventDefault();
- pesquisar($("pergunta").value);
+$("formulario").addEventListener("submit",e=>{
+ e.preventDefault();const t=$("pergunta").value.trim();if(t)pesquisar(t);
 });
-
-$("verMemoria").addEventListener("click",mostrarMemoria);
-
+$("verMemoria").addEventListener("click",()=>{
+ const chaves=Object.keys(memoria);
+ mostrarMensagem(chaves.length?chaves.map(k=>"Pergunta: "+k+"\nResposta: "+memoria[k]).join("\n\n"):"Ainda não aprendi associações.");
+});
 $("parar").addEventListener("click",()=>{
- pararVoz();
- if(chavePrivada)$("status").textContent="Voz interrompida.";
+ pararVoz();if(chavePrivada)$("status").textContent="Voz interrompida.";
 });
-
+$("bloquearAgora").addEventListener("click",()=>bloquearSPA("SPA bloqueada. Digite sua senha."));
 $("microfone").addEventListener("click",()=>{
- if(!chavePrivada || $("appSPA").hidden)return;
-
- const Reconhecimento=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!Reconhecimento){
-  falar("O reconhecimento de voz não está disponível neste navegador.");
-  return;
- }
-
- pararVoz();
- reconhecimento=new Reconhecimento();
- window.reconhecimentoSPA=reconhecimento;
- const minhaSessao=sessaoId;
-
- reconhecimento.lang="pt-BR";
- reconhecimento.continuous=false;
- reconhecimento.interimResults=false;
-
- reconhecimento.onstart=()=>{
-  if(chavePrivada && minhaSessao===sessaoId){
-   $("status").textContent="Estou ouvindo...";
-  }
+ if(!chavePrivada)return;
+ const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!R){falar("O reconhecimento de voz não está disponível neste navegador.");return}
+ pararVoz();reconhecimento=new R();const r=reconhecimento;const sessao=sessaoId;
+ r.lang="pt-BR";r.continuous=false;r.interimResults=false;
+ r.onstart=()=>{if(chavePrivada&&sessao===sessaoId)$("status").textContent="Estou ouvindo..."};
+ r.onresult=e=>{
+  if(!chavePrivada||sessao!==sessaoId)return;
+  const t=e.results[0][0].transcript;$("pergunta").value=t;pesquisar(t);
  };
-
- reconhecimento.onresult=evento=>{
-  if(!chavePrivada || minhaSessao!==sessaoId)return;
-  const texto=evento.results[0][0].transcript;
-  $("pergunta").value=texto;
-  pesquisar(texto);
- };
-
- reconhecimento.onerror=()=>{
-  if(chavePrivada && minhaSessao===sessaoId){
-   $("status").textContent="Não consegui ouvir. Confira a permissão do microfone.";
-  }
- };
-
- try{reconhecimento.start();}
- catch(e){$("status").textContent="Não foi possível iniciar o microfone.";}
+ r.onerror=()=>{if(chavePrivada&&sessao===sessaoId)$("status").textContent="Não consegui ouvir. Verifique a permissão do microfone."};
+ try{r.start()}catch(e){$("status").textContent="Não foi possível iniciar o microfone."}
 });
+if("serviceWorker"in navigator){
+ window.addEventListener("load",()=>{
+  navigator.serviceWorker.register("./sw.js").catch(e=>console.log("Service worker:",e));
+ });
+}
 </script>
 </body>
 </html>
