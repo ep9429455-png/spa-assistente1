@@ -1,0 +1,64 @@
+
+const CACHE_NAME = "spa-assistente-v1";
+
+const ARQUIVOS = [
+  "./",
+  "./index.html",
+  "./manifest.json"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(ARQUIVOS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((nomes) =>
+      Promise.all(
+        nomes
+          .filter((nome) => nome.startsWith("spa-assistente-") &&
+                            nome !== CACHE_NAME)
+          .map((nome) => caches.delete(nome))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const pedido = event.request;
+  const url = new URL(pedido.url);
+
+  if (
+    pedido.method !== "GET" ||
+    url.origin !== self.location.origin
+  ) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(pedido)
+      .then((resposta) => {
+        if (resposta.ok) {
+          const copia = resposta.clone();
+          caches.open(CACHE_NAME)
+            .then((cache) => cache.put(pedido, copia));
+        }
+        return resposta;
+      })
+      .catch(async () => {
+        const guardado = await caches.match(pedido);
+        if (guardado) return guardado;
+
+        if (pedido.mode === "navigate") {
+          return (await caches.match("./index.html")) ||
+            Response.error();
+        }
+
+        return Response.error();
+      })
+  );
+});
