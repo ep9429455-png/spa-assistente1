@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#170b29">
-<title>SPA 12 — Assistente</title>
+<title>SPA 13 — Assistente</title>
 
 <style>
 *{box-sizing:border-box}
@@ -55,7 +55,7 @@ footer{font-size:12px;color:#b9a3cb;margin-top:18px}
 <body>
 <main class="app">
  <div class="logo">S</div>
- <h1>SPA 12</h1>
+ <h1>SPA 13</h1>
  <div class="sub">Sua assistente pessoal 💜</div>
 
  <section class="panel">
@@ -63,10 +63,12 @@ footer{font-size:12px;color:#b9a3cb;margin-top:18px}
   <button id="listen">🎙️ Ativar voz</button>
   <button id="stop" class="stop">⏹ Parar de ouvir</button>
   <button id="testVoice" class="test">💜 Testar voz da SPA</button>
+
   <div id="answer" aria-live="polite">
    Olá! Sou a SPA. Estou aqui para ajudar você.
   </div>
-  <input id="message" placeholder="Digite um comando..." autocomplete="off">
+
+  <input id="message" placeholder="Digite uma pergunta ou comando..." autocomplete="off">
   <button id="send">Enviar mensagem</button>
  </section>
 
@@ -76,14 +78,16 @@ footer{font-size:12px;color:#b9a3cb;margin-top:18px}
    “Abrir YouTube”<br>
    “Abrir Google”<br>
    “Pesquisar Pokémon”<br>
+   “Pesquise sobre astronomia”<br>
+   “Buscar jogos 2D”<br>
    “Abrir WhatsApp”<br>
    “Que horas são?”<br>
    “Como você está?”
   </p>
  </section>
+
  <footer>
-  A voz e o microfone dependem do suporte do navegador
-  ou da integração nativa do APK.
+  Pesquisa abre resultados do Google. Voz e microfone dependem do suporte do navegador ou do APK.
  </footer>
 </main>
 
@@ -127,10 +131,6 @@ if("speechSynthesis" in window){
  speechSynthesis.onvoiceschanged = carregarVozes;
 }
 
-/*
- * A ponte nativa é opcional. O HTML não consegue criar
- * métodos Android que o aplicativo não tenha implementado.
- */
 function falar(texto){
  const android = window.AndroidAPI;
 
@@ -164,7 +164,6 @@ function falar(texto){
   const fala = new SpeechSynthesisUtterance(String(texto));
   fala.lang = selectedVoice ? selectedVoice.lang : "pt-BR";
   if(selectedVoice) fala.voice = selectedVoice;
-
   fala.rate = 0.95;
   fala.pitch = 1.12;
   fala.volume = 1;
@@ -183,13 +182,24 @@ function falar(texto){
  }
 }
 
+/* Abertura de sites com alternativa se a nova janela for bloqueada. */
 function abrir(url){
- const janela = window.open(url,"_blank");
+ try{
+  const janela = window.open(url,"_blank");
 
- if(janela){
+  if(janela){
+   responder("Abrindo o site...");
+   return;
+  }
+ }catch(e){
+  console.log("Abertura em nova janela bloqueada:",e);
+ }
+
+ try{
   responder("Abrindo o site...");
- }else{
-  responder("A abertura foi bloqueada. Tente abrir o link no navegador.");
+  window.location.href = url;
+ }catch(e){
+  responder("Não consegui abrir o site neste aplicativo.");
  }
 }
 
@@ -251,22 +261,33 @@ function executar(comando){
   return;
  }
 
+ /* Pesquisa melhorada: pesquisar, pesquise, buscar, busque e procure. */
  let pesquisa = null;
 
- if(t.startsWith("pesquisar ")){
-  pesquisa = original.slice(10).trim();
- }else if(t.startsWith("buscar ")){
-  pesquisa = original.slice(7).trim();
+ const gatilhosPesquisa = [
+  "pesquisar ",
+  "pesquise ",
+  "buscar ",
+  "busque ",
+  "procure ",
+  "pesquisa sobre "
+ ];
+
+ for(const gatilho of gatilhosPesquisa){
+  if(t.startsWith(gatilho)){
+   pesquisa = original.slice(gatilho.length).trim();
+   break;
+  }
  }
 
  if(pesquisa){
-  responder("Pesquisando: " + pesquisa);
+  responder("🔎 Pesquisando na internet: " + pesquisa);
   abrir("https://www.google.com/search?q="+encodeURIComponent(pesquisa));
   return;
  }
 
  const resposta =
-  "Ainda não aprendi esse comando, mas posso abrir sites e pesquisar na internet.";
+  "Ainda não aprendi esse comando. Posso abrir sites, pesquisar no Google, dizer as horas e responder a algumas perguntas básicas.";
  responder(resposta);
  falar(resposta);
 }
@@ -292,8 +313,7 @@ function iniciarVoz(){
 
  if(!Recognition){
   responder(
-   "O reconhecimento não está disponível nesta visualização. " +
-   "Use a entrada de texto ou compile o APK com reconhecimento de fala nativo."
+   "O reconhecimento não está disponível nesta visualização. Use a entrada de texto ou compile o APK com reconhecimento de fala nativo."
   );
   statusBox.textContent = "Microfone indisponível";
   return;
@@ -362,8 +382,7 @@ $("stop").addEventListener("click",pararVoz);
 
 $("testVoice").addEventListener("click",()=>{
  const texto =
-  "Olá! Eu sou a SPA. Que bom ter você aqui. " +
-  "Pode contar comigo. Vamos descobrir coisas novas juntos? 💜";
+  "Olá! Eu sou a SPA. Que bom ter você aqui. Vamos descobrir coisas novas juntos? 💜";
  responder(texto);
  falar(texto);
 });
